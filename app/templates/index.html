@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ user.username }}!</h1>
+
+    <div align="center">
+    <form action="" method="post" name="search">
+        <p>
+            {{ form.search.label }}<br>
+            {{ form.search(size=50)}}
+            {% for error in form.search.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+    </form>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
+    <script>
+    if (annyang) {
+        var helloFunction = function(tag) {
+            var url = 'https://www.google.com/search?q='+tag;
+            window.open(url);
+            //$.getJSON(url);
+        }
+
+        var stopFunction = function() {
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                var notification = new Notification("Stopping listening to voice commands");
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission(function (permission) {
+                    if(!('permission' in Notification)) {
+                        Notification.permission = permission;
+                    }
+
+                    if (permission === "granted") {
+                        var notification = new Notification("Stopping listening to voice commands");
+                    }
+                });
+            }
+            //alert('Stopping listening to voice commands').fadeOut();
+            annyang.pause();
+        }
+
+        // Let's define our first command. First the text we expect, and then the function it should call
+        var commands = {
+            'stop': stopFunction, '*tag': helloFunction 
+        };
+
+        annyang.addCommands(commands);
+
+        // Start listening. You can call this here, or attach this call to an event, button, etc.
+        annyang.start();
+
+        annyang.addCallback('resultNoMatch', function(whatWasHeard) {
+                console.log("No matches were found");
+                annyang.addCallback('result',function(whatWasHeard) { console.log(whatWasHeard) });
+        });
+
+        annyang.addCallback('resultMatch', function(whatWasHeard) {
+                annyang.addCallback('result',function(whatWasHeard) { console.log(whatWasHeard) });
+        });
+
+        //document.write(whatWasHeard);
+    } else {
+        document.write("Platform not supported. Please read FAQ for supported platforms");
+    }
+    </script>
+{% endblock %}
