@@ -1,17 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ user.username }}!</h1>
+    <!--
+    <style type="text/css">
+        select { width: 300px; }
+        textarea {
+            width: 300px;
+            height: 10px;
+        }
+    </style>
+    <p><textarea cols="50" rows="10"></textarea></p>
+    -->
 
     <div align="center">
     <form action="" method="post" name="search">
-        <p>
-            {{ form.search.label }}<br>
-            {{ form.search(size=50)}}
-            {% for error in form.search.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+    <input style="height:50px;font-size:14pt;" id="styling">
+    <style>
+    #styling {
+        background: white
+            url("https://www.google.com/intl/en/chrome/assets/common/images/content/mic.gif") right no-repeat;
+        padding-left: 17px;
+    }
+    </style>
+    <p>
+        {{ form.search.label }}<br>
+        <!--
+        <div id="div_start">
+            <button id="start_button" onclick="startButton(event)"><img alt="Start" id="start_img"
+            src="https://www.google.com/intl/en/chrome/assets/common/images/content/mic.gif"></button>
+        </div>
+        -->
+        {% for error in form.search.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
     </form>
     </div>
 
@@ -53,6 +75,10 @@
 
         // Start listening. You can call this here, or attach this call to an event, button, etc.
         annyang.start();
+
+        annyang.addCallback('result', function(whatWasHeard) {
+                document.write(whatWasHeard[0] + "<br>");
+        });
 
         annyang.addCallback('resultNoMatch', function(whatWasHeard) {
                 console.log("No matches were found");
